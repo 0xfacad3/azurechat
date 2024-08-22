@@ -1,4 +1,4 @@
-import { CosmosClient } from "@azure/cosmos";
+import { CosmosClient, CosmosClientOptions } from "@azure/cosmos";
 
 // Read Cosmos DB_NAME and CONTAINER_NAME from .env
 const DB_NAME = process.env.AZURE_COSMOSDB_DB_NAME || "chat";
@@ -16,7 +16,12 @@ export const CosmosInstance = () => {
     );
   }
 
-  return new CosmosClient({ endpoint, key });
+  const cosmosClientOptions: CosmosClientOptions = {
+    endpoint,
+    key
+  }
+
+  return new CosmosClient(cosmosClientOptions);
 };
 
 export const ConfigContainer = () => {
@@ -30,5 +35,6 @@ export const HistoryContainer = () => {
   const client = CosmosInstance();
   const database = client.database(DB_NAME);
   const container = database.container(CONTAINER_NAME);
+  console.log("history container created")
   return container;
 };

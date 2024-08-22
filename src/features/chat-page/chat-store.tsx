@@ -32,7 +32,7 @@ class ChatState {
   public loading: chatStatus = "idle";
   public input: string = "";
   public lastMessage: string = "";
-  public autoScroll: boolean = false;
+  public autoScroll: boolean = true;
   public userName: string = "";
   public chatThreadId: string = "";
 
@@ -112,6 +112,7 @@ class ChatState {
   }
 
   public updateInput(value: string) {
+    console.log("updateInput: ", value);
     this.input = value;
   }
 
@@ -155,6 +156,7 @@ class ChatState {
     abortController = controller;
 
     try {
+      console.log("chat create start");
       if (this.chatThreadId === "" || this.chatThreadId === undefined) {
         showError("Chat thread ID is empty");
         return;
@@ -165,6 +167,9 @@ class ChatState {
         body: formData,
         signal: controller.signal,
       });
+
+      console.log("chat create end");
+      console.log("response", response);
 
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === "event") {
@@ -260,6 +265,15 @@ class ChatState {
 
   private async updateTitle() {
     if (this.chatThread && this.chatThread.name === NEW_CHAT_NAME) {
+      await UpdateChatTitle(this.chatThreadId, this.messages[0].content);
+      RevalidateCache({
+        page: "chat",
+        type: "layout",
+      });
+    }
+
+    // chat title has "Persona( " text
+    if (this.chatThread && this.chatThread.name.includes("Persona(")) {
       await UpdateChatTitle(this.chatThreadId, this.messages[0].content);
       RevalidateCache({
         page: "chat",

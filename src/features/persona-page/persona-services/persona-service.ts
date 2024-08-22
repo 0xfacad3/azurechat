@@ -15,6 +15,7 @@ import { HistoryContainer } from "@/features/common/services/cosmos";
 import { uniqueId } from "@/features/common/util";
 import { SqlQuerySpec } from "@azure/cosmos";
 import { PERSONA_ATTRIBUTE, PersonaModel, PersonaModelSchema } from "./models";
+import { FindChatThreadForCurrentUser } from "@/features/chat-page/chat-services/chat-thread-service";
 
 interface PersonaInput {
   name: string;
@@ -292,7 +293,7 @@ export const CreatePersonaChat = async (
     const persona = personaResponse.response;
 
     const response = await UpsertChatThread({
-      name: persona.name,
+      name: `Persona(${persona.name}):`,
       useName: user.name,
       userId: await userHashedId(),
       id: "",
@@ -306,7 +307,15 @@ export const CreatePersonaChat = async (
       extension: [],
     });
 
-    return response;
+    // chack status
+    if (response.status === "OK") {
+      // get id from response object
+      const chatId = response.response.id;
+      const chatThread = await FindChatThreadForCurrentUser(chatId);
+      return response;
+    } else {
+      return response;
+    }
   }
   return personaResponse;
 };

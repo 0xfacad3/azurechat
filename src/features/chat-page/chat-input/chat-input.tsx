@@ -32,7 +32,11 @@ import {
   useTextToSpeech,
 } from "./speech/use-text-to-speech";
 
-export const ChatInput = () => {
+interface ChatInputProps {
+  className?: string;
+}
+
+export const ChatInput: React.FC<ChatInputProps> = (props) => {
   const { loading, input, chatThreadId } = useChat();
   const { uploadButtonLabel } = useFileStore();
   const { isPlaying } = useTextToSpeech();
@@ -43,6 +47,7 @@ export const ChatInput = () => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const submit = () => {
+    console.log("submit func is called");
     if (formRef.current) {
       formRef.current.requestSubmit();
     }
@@ -51,6 +56,7 @@ export const ChatInput = () => {
   return (
     <ChatInputForm
       ref={formRef}
+      className={props.className}
       onSubmit={(e) => {
         e.preventDefault();
         chatStore.submitChat(e);
@@ -59,7 +65,8 @@ export const ChatInput = () => {
     >
       <ChatTextInput
         onBlur={(e) => {
-          if (e.currentTarget.value.replace(/\s/g, "").length === 0) {
+          if (e.currentTarget.value.length === 0) {
+            console.log("resetting rows");
             ResetInputRows();
           }
         }}

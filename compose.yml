@@ -1,0 +1,10 @@
+services:
+  web:
+    restart: always
+    build: ./src
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    logging:
+      driver: "none"

@@ -48,7 +48,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
         chatDocuments={props.chatDocuments}
         extensions={props.extensions}
       />
-      <ChatMessageContainer ref={current}>
+      <ChatMessageContainer ref={current} className="flex-1">
         <ChatMessageContentArea>
           {messages.map((message) => {
             return (
@@ -72,7 +72,7 @@ export const ChatPage: FC<ChatPageProps> = (props) => {
           {loading === "loading" && <ChatLoading />}
         </ChatMessageContentArea>
       </ChatMessageContainer>
-      <ChatInput />
+      <ChatInput className="flex-2" />
     </main>
   );
 };

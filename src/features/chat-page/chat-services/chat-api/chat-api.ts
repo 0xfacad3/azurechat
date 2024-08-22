@@ -21,6 +21,7 @@ import { OpenAIStream } from "./open-ai-stream";
 type ChatTypes = "extensions" | "chat-with-file" | "multimodal";
 
 export const ChatAPIEntry = async (props: UserPrompt, signal: AbortSignal) => {
+  console.log("ChatAPIEntry is begin")
   const currentChatThreadResponse = await EnsureChatThreadOperation(props.id);
 
   if (currentChatThreadResponse.status !== "OK") {
@@ -54,6 +55,7 @@ export const ChatAPIEntry = async (props: UserPrompt, signal: AbortSignal) => {
     chatType = "extensions";
   }
 
+  console.log("△ start saving message")
   // save the user message
   await CreateChatMessage({
     name: user.name,
@@ -62,9 +64,11 @@ export const ChatAPIEntry = async (props: UserPrompt, signal: AbortSignal) => {
     chatThreadId: currentChatThread.id,
     multiModalImage: props.multimodalImage,
   });
+  console.log("△ end saving message")
 
   let runner: ChatCompletionStreamingRunner;
 
+  console.log("△ start chat api")
   switch (chatType) {
     case "chat-with-file":
       runner = await ChatApiRAG({
@@ -93,6 +97,9 @@ export const ChatAPIEntry = async (props: UserPrompt, signal: AbortSignal) => {
       break;
   }
 
+  console.log("finished chat api")
+
+  console.log("openai stream is begin")
   const readableStream = OpenAIStream({
     runner: runner,
     chatThread: currentChatThread,
