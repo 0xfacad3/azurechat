@@ -274,7 +274,10 @@ class ChatState {
 
     // chat title has "Persona( " text
     if (this.chatThread && this.chatThread.name.includes("Persona(")) {
-      await UpdateChatTitle(this.chatThreadId, this.messages[0].content);
+      await UpdateChatTitle(
+        this.chatThreadId,
+        `${this.chatThread.name}: ${this.messages[0].content}`
+      );
       RevalidateCache({
         page: "chat",
         type: "layout",
