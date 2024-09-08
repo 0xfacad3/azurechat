@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: "standalone",
+  // for dev
+  // swcMinify: true,
+  // productionBrowserSourceMaps: true,
   // experimental: {
   //   serverComponentsExternalPackages: ["@azure/storage-blob"],
   // },

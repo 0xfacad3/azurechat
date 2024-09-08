@@ -108,7 +108,7 @@ export const onKeyDown = (
     event.preventDefault();
     event.stopPropagation();
     state.shortcutActivated = true;
-    const textToInsert = "\n```\n\n```\n";
+    const textToInsert = "\n```\n```\n";
     const cursorOffset = textToInsert.indexOf("```") + 3;
     insertTextAtCursor(activeElement, textToInsert, cursorOffset);
     return;

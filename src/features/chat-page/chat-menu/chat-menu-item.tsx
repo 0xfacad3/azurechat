@@ -25,6 +25,17 @@ interface ChatMenuItemProps {
   children?: React.ReactNode;
 }
 
+// CSSスタイル定義をJSXに含める
+const styles = `
+  .line-clamp {
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 4em;
+  }
+`;
+
 export const ChatMenuItem: FC<ChatMenuItemProps> = (props) => {
   const path = usePathname();
   const { isLoading, handleAction } = useDropdownAction({
@@ -32,51 +43,58 @@ export const ChatMenuItem: FC<ChatMenuItemProps> = (props) => {
   });
 
   return (
-    <div className="flex group hover:bg-muted pr-3 text-muted-foreground rounded-sm hover:text-muted-foreground">
-      <Link
-        href={props.href}
-        className={cn(
-          "flex-1 flex items-center gap-2 p-3 overflow-hidden",
-          path.startsWith(props.href) && props.href !== "/"
-            ? "text-primary"
-            : ""
-        )}
-      >
-        {props.children}
-      </Link>
-      <DropdownMenu>
-        <DropdownMenuTrigger disabled={isLoading}>
-          {isLoading ? (
-            <LoadingIndicator isLoading={isLoading} />
-          ) : (
-            <MoreVertical size={18} aria-label="Chat Menu Item Dropdown Menu" />
+    <>
+      {/* CSSスタイルを適用 */}
+      <style>{styles}</style>
+      <div className="flex group hover:bg-muted pr-3 border-b text-muted-foreground rounded-sm hover:text-muted-foreground">
+        <Link
+          href={props.href}
+          className={cn(
+            "flex-1 flex items-center gap-2 py-6 px-3 overflow-hidden line-clamp",
+            path.startsWith(props.href) && props.href !== "/"
+              ? "text-primary"
+              : ""
           )}
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="right" align="start">
-          <DropdownMenuItemWithIcon
-            onClick={async () => await handleAction("bookmark")}
-          >
-            <BookmarkCheck size={18} />
-            <span>
-              {props.chatThread.bookmarked ? "Remove bookmark" : "Bookmark"}
-            </span>
-          </DropdownMenuItemWithIcon>
-          <DropdownMenuItemWithIcon
-            onClick={async () => await handleAction("rename")}
-          >
-            <Pencil size={18} />
-            <span>Rename</span>
-          </DropdownMenuItemWithIcon>
-          <DropdownMenuSeparator />
-          <DropdownMenuItemWithIcon
-            onClick={async () => await handleAction("delete")}
-          >
-            <Trash size={18} />
-            <span>Delete</span>
-          </DropdownMenuItemWithIcon>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        >
+          {props.children}
+        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger disabled={isLoading}>
+            {isLoading ? (
+              <LoadingIndicator isLoading={isLoading} />
+            ) : (
+              <MoreVertical
+                size={18}
+                aria-label="Chat Menu Item Dropdown Menu"
+              />
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="right" align="start">
+            <DropdownMenuItemWithIcon
+              onClick={async () => await handleAction("bookmark")}
+            >
+              <BookmarkCheck size={18} />
+              <span>
+                {props.chatThread.bookmarked ? "Remove bookmark" : "Bookmark"}
+              </span>
+            </DropdownMenuItemWithIcon>
+            <DropdownMenuItemWithIcon
+              onClick={async () => await handleAction("rename")}
+            >
+              <Pencil size={18} />
+              <span>Rename</span>
+            </DropdownMenuItemWithIcon>
+            <DropdownMenuSeparator />
+            <DropdownMenuItemWithIcon
+              onClick={async () => await handleAction("delete")}
+            >
+              <Trash size={18} />
+              <span>Delete</span>
+            </DropdownMenuItemWithIcon>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   );
 };
 

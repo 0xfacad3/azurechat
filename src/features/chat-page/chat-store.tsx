@@ -169,7 +169,7 @@ class ChatState {
       });
 
       console.log("chat create end");
-      console.log("response", response);
+      // console.log("response", response);
 
       const onParse = (event: ParsedEvent | ReconnectInterval) => {
         if (event.type === "event") {

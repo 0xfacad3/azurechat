@@ -1,8 +1,6 @@
 up:
-	cd ./src && npm run build && npm start
+	cd ./src && pnpm -r run build && pnpm start
 
 dev:
-	npm install && npm run dev
+	pnpm install && pnpm run dev
 
-test:
-	npm install && npm test

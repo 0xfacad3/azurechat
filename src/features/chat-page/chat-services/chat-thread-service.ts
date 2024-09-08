@@ -1,57 +1,73 @@
-"use server";  
-import "server-only";  
-import { getCurrentUser, userHashedId, userSession } from "@/features/auth-page/helpers";  
-import { RedirectToChatThread } from "@/features/common/navigation-helpers";  
-import { ServerActionResponse } from "@/features/common/server-action-response";  
-import { uniqueId } from "@/features/common/util";  
-import { CHAT_DEFAULT_PERSONA, NEW_CHAT_NAME } from "@/features/theme/theme-config";  
-import { SqlQuerySpec } from "@azure/cosmos";  
-import { HistoryContainer } from "../../common/services/cosmos";  
-import { DeleteDocuments } from "./azure-ai-search/azure-ai-search";  
-import { FindAllChatDocuments } from "./chat-document-service";  
-import { FindAllChatMessagesForCurrentUser } from "./chat-message-service";  
-import { CHAT_THREAD_ATTRIBUTE, ChatDocumentModel, ChatThreadModel } from "./models";  
-  
-export const FindAllChatThreadForCurrentUser = async (): Promise<ServerActionResponse<Array<ChatThreadModel>>> => {  
-  try {    
-    const querySpec: SqlQuerySpec = {  
-      query: "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.isDeleted=@isDeleted ORDER BY r.createdAt DESC",  
-      parameters: [  
-        {  
-          name: "@type",  
-          value: CHAT_THREAD_ATTRIBUTE,  
-        },  
-        {  
-          name: "@userId",  
-          value: await userHashedId(), 
-        },  
-        {  
-          name: "@isDeleted",  
-          value: false,  
-        },  
-      ],  
-    };  
-  
-    console.log("querySpec", querySpec);  
-    console.log("HistoryContainer start!!!!");  
-  
-    const { resources } = await HistoryContainer().items.query<ChatThreadModel>(querySpec).fetchAll();  
+"use server";
+import "server-only";
+import {
+  getCurrentUser,
+  userHashedId,
+  userSession,
+} from "@/features/auth-page/helpers";
+import { RedirectToChatThread } from "@/features/common/navigation-helpers";
+import { ServerActionResponse } from "@/features/common/server-action-response";
+import { uniqueId } from "@/features/common/util";
+import {
+  CHAT_DEFAULT_PERSONA,
+  NEW_CHAT_NAME,
+} from "@/features/theme/theme-config";
+import { SqlQuerySpec } from "@azure/cosmos";
+import { HistoryContainer } from "../../common/services/cosmos";
+import { DeleteDocuments } from "./azure-ai-search/azure-ai-search";
+import { FindAllChatDocuments } from "./chat-document-service";
+import { FindAllChatMessagesForCurrentUser } from "./chat-message-service";
+import {
+  CHAT_THREAD_ATTRIBUTE,
+  ChatDocumentModel,
+  ChatThreadModel,
+} from "./models";
 
-    console.log("data fetched")
-    console.log(resources);
-  
-    return {  
-      status: "OK",  
-      response: resources,  
-    };  
-  } catch (error) {  
-    console.log("error in FindAllChatThreadForCurrentUser", error);  
-    return {  
-      status: "ERROR",  
-      errors: [{ message: `${error}` }],  
-    };  
-  }  
-};  
+export const FindAllChatThreadForCurrentUser = async (): Promise<
+  ServerActionResponse<Array<ChatThreadModel>>
+> => {
+  try {
+    const querySpec: SqlQuerySpec = {
+      query:
+        "SELECT * FROM root r WHERE r.type=@type AND r.userId=@userId AND r.isDeleted=@isDeleted ORDER BY r.createdAt DESC",
+      parameters: [
+        {
+          name: "@type",
+          value: CHAT_THREAD_ATTRIBUTE,
+        },
+        {
+          name: "@userId",
+          value: await userHashedId(),
+        },
+        {
+          name: "@isDeleted",
+          value: false,
+        },
+      ],
+    };
+
+    console.log("querySpec", querySpec);
+    console.log("HistoryContainer start!!!!");
+
+    const { resources } = await HistoryContainer()
+      .items.query<ChatThreadModel>(querySpec)
+      .fetchAll();
+
+    console.log("data fetched");
+    // console.log(resources);
+
+    return {
+      status: "OK",
+      response: resources,
+    };
+  } catch (error) {
+    console.log("error in FindAllChatThreadForCurrentUser", error);
+    return {
+      status: "ERROR",
+      errors: [{ message: `${error}` }],
+    };
+  }
+};
 
 export const FindChatThreadForCurrentUser = async (
   id: string

@@ -7,14 +7,17 @@ WORKDIR /app
 # プロジェクトの残りのファイルをコピーします
 COPY . .
 
+# pnpmをインストールします
+RUN npm install -g pnpm
+
 # 依存関係をインストールします
-RUN npm install
+RUN pnpm install
 
 # ビルドを実行します
-RUN npm run build
+RUN pnpm -r run build
 
 # Dockerコンテナが使用するポートを公開します
 EXPOSE 3000
 
 # Next.jsアプリケーションを起動します
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
